@@ -106,13 +106,26 @@ footer img{height:40px;width:auto;display:block}
 /* the page sits over the stage; only the text itself takes clicks, so a lit screen behind it can be clicked */
 main{pointer-events:none}
 .col,.col *{pointer-events:auto}
+/* the scroll cue sits in the middle of the view until the visitor reaches the lab */
+.cue{position:fixed;left:calc(50vw + var(--gutter)/2 + 310px);bottom:62px;transform:translateX(-50%);z-index:7;display:inline-flex;align-items:center;gap:10px;white-space:nowrap;
+  font:700 1rem var(--body);color:var(--ink);background:rgba(2,11,37,.8);border:1px solid var(--line);border-radius:10px;padding:12px 16px 12px 20px;cursor:pointer;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:opacity .45s ease,visibility .45s,border-color .2s}
+.cue:hover{border-color:var(--signal)}
+.cue.off{opacity:0;visibility:hidden}
+.cue svg{width:18px;height:22px;overflow:visible;flex:none}
+.cue path{fill:none;stroke:var(--signal);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;animation:cue 1.6s ease-in-out infinite}
+.cue path+path{animation-delay:.25s}
+@keyframes cue{0%{opacity:0;transform:translateY(-4px)}40%{opacity:1}100%{opacity:0;transform:translateY(5px)}}
 
 @media (max-width:1099px){
   .menu{display:inline-block}
   .nav{position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:rgba(2,11,37,.97);border-bottom:1px solid var(--line);padding:6px var(--gutter) 14px;display:none}
   .nav.open{display:flex}
   .nav a{padding:13px 0;border-bottom:1px solid var(--line)}
-  /* phones: the 3D view is a stage pinned under the header; the page scrolls beneath it */
+  .brand img{height:38px}
+}
+/* phones held upright, and tablets: the 3D view is a stage pinned under the header; the page scrolls beneath it */
+@media (max-width:1099px) and (orientation:portrait), (max-width:1099px) and (min-height:521px){
   #stage{inset:0 0 auto 0;height:46vh;height:46svh;min-height:300px;z-index:5;background-image:url(assets/poster-m.jpg);background-position:50% 50%}
   #stage:after{content:"";position:absolute;inset:auto 0 0 0;height:44px;background:linear-gradient(rgba(2,11,37,0),var(--void))}
   body{background-image:none}
@@ -124,9 +137,49 @@ main{pointer-events:none}
   body.no3d #stage{height:38vh;min-height:240px}
   body.no3d .hero{padding-top:calc(38vh + 26px)}
   main{pointer-events:auto}
-  .brand img{height:38px}
+  .cue{left:auto;right:12px;bottom:auto;top:calc(46vh - 46px);top:calc(46svh - 46px);transform:none;font-size:.86rem;padding:7px 10px 7px 13px;gap:7px}
+  .cue svg{width:14px;height:18px}
 }
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+/* a phone held sideways is too short to stack: the view fills the screen and the text takes a narrow left column */
+@media (orientation:landscape) and (max-height:520px){
+  :root{--gutter:16px}
+  body{font-size:.95rem;line-height:1.55}
+  .top{padding:5px var(--gutter)}
+  .brand img{height:30px}
+  .menu{padding:6px 12px}
+  .nav{max-height:calc(100vh - 44px);overflow:auto}
+  .nav a{padding:10px 0}
+  h1{font-size:1.5rem}
+  h2{font-size:1.3rem}
+  .lead{font-size:1rem}
+  .sub{font-size:1.05rem}
+  .quote{font-size:1.05rem}
+  .col{max-width:40vw;gap:14px}
+  .sec{padding:34px var(--gutter) 30px;scroll-margin-top:34px;
+    background:linear-gradient(90deg,rgba(2,11,37,.96) 0,rgba(2,11,37,.9) calc(var(--gutter) + 39vw),rgba(2,11,37,.5) calc(var(--gutter) + 45vw),rgba(2,11,37,0) calc(var(--gutter) + 52vw))}
+  .hero{padding-top:56px;min-height:100vh;min-height:100svh}
+  .walk{min-height:330vh;padding-top:0;padding-bottom:0}
+  .walk .col{top:26vh;padding:12px 0}
+  .rows li{padding:11px 0}
+  .form{padding:14px;gap:10px}
+  .btn{padding:10px 16px}
+  .cap{right:10px;bottom:8px;font-size:.68rem;padding:4px 8px}
+  .cue{left:calc(70vw + 8px);bottom:38px;font-size:.88rem;padding:8px 12px 8px 14px}
+  .cue svg{width:15px;height:19px}
+  footer{padding:20px var(--gutter) 28px}
+}
+/* the smallest phones held sideways: a slightly wider column and smaller type, so the first screen still shows its buttons */
+@media (orientation:landscape) and (max-height:520px) and (max-width:740px){
+  body{font-size:.9rem}
+  h1{font-size:1.3rem}
+  h2{font-size:1.2rem}
+  .lead{font-size:.94rem}
+  .col{max-width:44vw;gap:12px}
+  .sec{background:linear-gradient(90deg,rgba(2,11,37,.96) 0,rgba(2,11,37,.9) calc(var(--gutter) + 43vw),rgba(2,11,37,.5) calc(var(--gutter) + 49vw),rgba(2,11,37,0) calc(var(--gutter) + 56vw))}
+  .hero{padding-top:52px;padding-bottom:16px}
+  .cue{left:calc(73vw + 8px)}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cue path{animation:none}}
 </style>
 </head>
 <body>
@@ -271,6 +324,7 @@ main{pointer-events:none}
   <span>© 2026 Digital Vector</span>
 </footer>
 
+<button class="cue" id="cue" type="button"><span id="cuelab">Scroll to walk in</span><svg viewBox="0 0 16 20" aria-hidden="true"><path d="M3 3l5 5 5-5"/><path d="M3 11l5 5 5-5"/></svg></button>
 <div class="cap" id="cap" aria-hidden="true">Loading the school</div>
 
 
@@ -367,7 +421,49 @@ var DATA={"glows":[{"p":[-1.98,3.66,8.0],"s":2.6,"k":"post"},{"p":[1.98,3.66,8.0
 var A='assets/', cap=$('cap'), stage=$('stage'), canvas=$('field'), loadEl=$('load');
 $('enter').addEventListener('click',function(){go('hub')});
 function no3d(){ document.body.classList.add('no3d'); if(loadEl) loadEl.style.display='none'; cap.textContent=''; }
-function isSmall(){ return window.innerWidth<1100; }
+function isSmall(){ return window.innerWidth<1100; }                                      /* phone or tablet: lighter textures */
+var LANDQ='(orientation:landscape) and (max-height:520px)', LANDFIT=1.2;
+function isLand(){ return !!(window.matchMedia&&window.matchMedia(LANDQ).matches); }    /* a phone held sideways */
+function isStacked(){ return isSmall()&&!isLand(); }                                      /* the stage is pinned above the page */
+
+/* ---------- the scroll cue: tells a first-time visitor that scrolling is how you walk in. It goes once they reach the lab. ---------- */
+(function(){
+  var cue=$('cue'), lab=$('cuelab'); if(!cue) return;
+  function upd(){
+    var y=window.pageYOffset, vh=window.innerHeight, hub=$('hub'), walk=$('walk');
+    var end=hub?hub.getBoundingClientRect().top+y-vh*.8:vh*.5, mid=walk?walk.getBoundingClientRect().top+y-vh*.55:end;
+    cue.classList.toggle('off',y>end);
+    var t=document.body.classList.contains('no3d')?'Scroll down':(y>mid?'Keep scrolling':(isStacked()?'Scroll':'Scroll to walk in'));
+    if(lab.textContent!==t) lab.textContent=t;
+  }
+  cue.addEventListener('click',function(){ window.scrollBy({top:Math.round(window.innerHeight*.9),behavior:reduce?'auto':'smooth'}); });
+  window.addEventListener('scroll',upd,{passive:true}); window.addEventListener('resize',upd); window.addEventListener('load',upd); upd();
+})();
+
+/* ---------- turning a phone keeps your place. The upright and sideways layouts have very different page heights,
+   so the same scroll offset would land in another section. ---------- */
+(function(){
+  var ids=['home','walk','hub','software','consulting','books','about','contact'], cur={id:'home',f:0}, lock=false;
+  function modeKey(){ return isLand()?'L':(isSmall()?'S':'W'); }
+  function refY(){ return isStacked()?stage.getBoundingClientRect().height+10:70; }      /* a line just under the header or the pinned stage */
+  function track(){
+    if(lock) return; var y=refY();
+    if(window.pageYOffset<20){ cur={id:'home',f:-1}; return; }        /* at the very top: stay there */
+    for(var i=ids.length-1;i>=0;i--){ var el=$(ids[i]); if(!el) continue; var r=el.getBoundingClientRect();
+      if(r.top<=y||i===0){ cur={id:ids[i],f:Math.min(1,Math.max(0,(y-r.top)/Math.max(1,r.height)))}; break; } }
+  }
+  var key=modeKey();
+  window.addEventListener('scroll',track,{passive:true});
+  window.addEventListener('resize',function(){
+    var k=modeKey(); if(k===key) return; key=k; lock=true;
+    requestAnimationFrame(function(){
+      var el=$(cur.id); if(el){ var r=el.getBoundingClientRect(), y=cur.f<0?0:Math.max(0,Math.round(r.top+window.pageYOffset+cur.f*r.height-refY()));
+        try{ window.scrollTo({top:y,behavior:'instant'}); }catch(err){ window.scrollTo(0,y); } }
+      lock=false;
+    });
+  });
+  track();
+})();
 var KEYS=[
   {n:'home',      p:[-13.5,6.2,22.0], l:[4.0,2.4,0],        f:40, c:'Outside the school, after hours'},
   {n:'path',      p:[-1.2,2.2,15.0],  l:[0.6,2.2,0],        f:50, c:'The front path'},
@@ -442,8 +538,8 @@ function start(){
     ' color=mo*color; color=pow(max(color,vec3(0.0)),vec3(2.2)); return clamp(color,0.0,1.0); }');
   try{ renderer=new T.WebGLRenderer({canvas:canvas,antialias:true,powerPreference:'high-performance'}); }catch(err){ no3d(); return; }
   renderer.toneMapping=T.CustomToneMapping; renderer.toneMappingExposure=1.1; renderer.outputEncoding=T.sRGBEncoding;
-  var small=isSmall();
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,small?2:1.5));
+  var lite=isSmall(), small=isStacked();
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,lite?2:1.5));
   var scene=new T.Scene(), cam=new T.PerspectiveCamera(46,1,0.1,900);
   function lin(hex){ return new T.Color(hex).convertSRGBToLinear(); }
   scene.fog=new T.FogExp2(0x000000,0.0038); scene.fog.color.setRGB(.012,.022,.07);
@@ -463,7 +559,7 @@ function start(){
     for(var i=0;i<n;i++){ var a=(i*2.399963)%(2*Math.PI), y=0.12+0.88*((i*0.6180339)%1), r=Math.sqrt(1-y*y);
       pos[k++]=Math.cos(a)*r*650; pos[k++]=y*650; pos[k++]=Math.sin(a)*r*650; }
     var g=new T.BufferGeometry(); g.setAttribute('position',new T.BufferAttribute(pos,3));
-    var st=new T.Points(g,new T.PointsMaterial({color:0xdfe8ff,size:small?1.4:1.7,sizeAttenuation:false,transparent:true,opacity:.75,fog:false,depthWrite:false,toneMapped:false}));
+    var st=new T.Points(g,new T.PointsMaterial({color:0xdfe8ff,size:lite?1.4:1.7,sizeAttenuation:false,transparent:true,opacity:.75,fog:false,depthWrite:false,toneMapped:false}));
     st.frustumCulled=false; st.renderOrder=-9; scene.add(st);
   })();
 
@@ -473,7 +569,7 @@ function start(){
   man.onError=function(u){ failed=true; };
   var TL=new T.TextureLoader(man);
   function loadTex(name,ext){ var t=TL.load(A+name+'.'+ext); t.encoding=T.sRGBEncoding; t.flipY=false; return t; }
-  Object.keys(LMS).forEach(function(g){ var t=loadTex('lm_'+g+(small?'_s':''),'webp'); t.generateMipmaps=false; t.minFilter=T.LinearFilter; lm[g]=t; });
+  Object.keys(LMS).forEach(function(g){ var t=loadTex('lm_'+g+(lite?'_s':''),'webp'); t.generateMipmaps=false; t.minFilter=T.LinearFilter; lm[g]=t; });
   Object.keys(SCREENS).forEach(function(k){ var s=SCREENS[k]; (s.slides||[s.img]).forEach(function(n){ if(!tex[n]){ tex[n]=loadTex(n,'jpg'); tex[n].anisotropy=4; } }); });
   var GL=new T.GLTFLoader(man); if(window.MeshoptDecoder) GL.setMeshoptDecoder(window.MeshoptDecoder);
   GL.load(A+'school.glb',function(g){ gltf=g; },undefined,function(){ failed=true; });
@@ -534,7 +630,7 @@ function start(){
       var rt=new T.WebGLCubeRenderTarget(size,{format:T.RGBFormat,generateMipmaps:true,minFilter:T.LinearMipmapLinearFilter});
       var cc=new T.CubeCamera(.1,400,rt); cc.position.set(x,y,z); scene.add(cc); cc.update(renderer,scene); scene.remove(cc); return rt.texture;
     }
-    var eSharp=capture(8,1.5,-4.9,small?128:256), eSoft=capture(8,1.4,-4.9,32), eExt=capture(0,3.5,10,128);
+    var eSharp=capture(8,1.5,-4.9,lite?128:256), eSoft=capture(8,1.4,-4.9,32), eExt=capture(0,3.5,10,128);
     [['sharp',eSharp],['soft',eSoft],['ext',eExt]].forEach(function(p){ envMats[p[0]].forEach(function(m){ m.envMap=p[1]; m.needsUpdate=true; }); });
     screens.forEach(function(s){ s.mat.envMap=eSharp; s.mat.needsUpdate=true; });
     ready=true; measure(); dirty=true;
@@ -579,18 +675,20 @@ function start(){
   }
   function resize(){
     var r=stage.getBoundingClientRect(); W=Math.max(1,Math.round(r.width)); H=Math.max(1,Math.round(r.height));
-    small=isSmall();
+    small=isStacked();
     renderer.setSize(W,H,false); cam.aspect=W/H;
     if(small){ /* a wide, short stage (tablet, landscape phone) needs a longer lens than a phone held upright */
       fit=Math.max(1,Math.sqrt(W/H/1.3)); cam.setViewOffset(W,H,0,-Math.round(H*.07),W,H); }
-    else{ /* the text column owns the left; centre the view in what is left and widen the lens if that is narrow */
-      var gut=Math.min(88,Math.max(20,W*.06)), x0=gut+650; fit=Math.min(1,Math.max(.55,(W-x0)/(W*.5)));
-      cam.setViewOffset(W,H,-Math.round(Math.min(W*.36,x0/2)),0,W,H); }
+    else{ /* the text column owns the left; centre the view in what is left and widen the lens if that is narrow.
+             A phone held sideways gets the same layout with a narrower column and a slightly longer lens. */
+      var c=document.querySelector('.col').getBoundingClientRect(), x0=c.left+c.width+30, land=isLand();
+      fit=land?LANDFIT:Math.min(1,Math.max(.55,(W-x0)/(W*.5)));
+      cam.setViewOffset(W,H,-Math.round(Math.min(W*.36,x0/2)),land?-Math.round(H*.05):0,W,H); }
     cam.updateProjectionMatrix(); dirty=true;
   }
   /* map scroll position to a place on the route */
   function measure(){
-    var vh=window.innerHeight, sm=isSmall(), stageH=sm?stage.getBoundingClientRect().height:0;
+    var vh=window.innerHeight, sm=isStacked(), stageH=sm?stage.getBoundingClientRect().height:0;
     var line=sm?stageH+(vh-stageH)*.3:vh*.55, margin=sm?stageH+6:28, e=line-margin, hold=vh*.34, sy=window.pageYOffset;
     anchors=[];
     function add(y,u){ if(anchors.length&&y<=anchors[anchors.length-1][0]+1) y=anchors[anchors.length-1][0]+1; anchors.push([y,u]); }
